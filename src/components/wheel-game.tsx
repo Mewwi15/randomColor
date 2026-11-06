@@ -8,6 +8,7 @@ import { LuckyWheel } from "./lucky-wheel";
 import { PicturePlaceholder } from "./picture-placeholder";
 import { CreamMascot, type CreamPose } from "./cream-mascot";
 import { DEFAULT_ENTRIES, PALETTE, colorAnswerTone, randomIndex } from "@/lib/wheel";
+import { ActivityAudio } from "@/lib/activity-audio";
 import { ACTIVITY_STORAGE_KEY, COLOR_LIMIT, PICTURE_ENTRIES, TOTAL_ROUNDS, activityReducer, availableColors, availablePictures, canSpin, colorUses, initialActivity, isShowingResult, isSpinning, restoreActivity, type WheelKind } from "@/lib/activity";
 
 export function WheelGame() {
@@ -19,7 +20,8 @@ export function WheelGame() {
   const [resetOpen, setResetOpen] = useState(false);
   const soundRef = useRef(true);
   const spinningRef = useRef(false);
-  const audioRef = useRef<AudioContext | null>(null);
+  const audioRef = useRef<ActivityAudio | null>(null);
+  const revealingRef = useRef(false);
   const resultDialog = useRef<HTMLDialogElement>(null);
   const resetDialog = useRef<HTMLDialogElement>(null);
 
@@ -52,8 +54,35 @@ export function WheelGame() {
       }
     } catch { setStorageAvailable(false); }
     setReady(true);
-    return () => { if (audioRef.current) void audioRef.current.close().catch(() => {}); };
   }, []);
+
+  useEffect(() => {
+    const audio = new ActivityAudio();
+    audioRef.current = audio;
+    audio.configure({ enabled: soundRef.current, visible: !document.hidden });
+    const activate = (event: Event) => {
+      if (event.target instanceof Element && event.target.closest("[data-sound-toggle]")) return;
+      if (event instanceof KeyboardEvent && (event.repeat || !["Enter", " "].includes(event.key))) return;
+      audio.activate();
+    };
+    const onVisibility = () => audio.configure({ visible: !document.hidden });
+    document.addEventListener("click", activate, true);
+    document.addEventListener("keydown", activate, true);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("click", activate, true);
+      document.removeEventListener("keydown", activate, true);
+      document.removeEventListener("visibilitychange", onVisibility);
+      audio.dispose();
+      audioRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    audioRef.current?.configure({ enabled: sound, quiet: showingResult || resetOpen, complete });
+  }, [sound, showingResult, resetOpen, complete]);
+
+  useEffect(() => { revealingRef.current = false; }, [state.phase]);
 
   useEffect(() => {
     if (!ready || spinning) return;
@@ -82,23 +111,7 @@ export function WheelGame() {
   }, []);
 
   const tone = useCallback((frequency: number, length = 0.07, delay = 0) => {
-    if (!soundRef.current || !audioRef.current || audioRef.current.state !== "running") return;
-    try {
-      const context = audioRef.current;
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      const start = context.currentTime + delay;
-      oscillator.type = "sine";
-      oscillator.frequency.setValueAtTime(frequency, start);
-      gain.gain.setValueAtTime(0, start);
-      gain.gain.linearRampToValueAtTime(0.1, start + 0.008);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + length);
-      oscillator.connect(gain);
-      gain.connect(context.destination);
-      oscillator.start(start);
-      oscillator.stop(start + length);
-      oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
-    } catch { /* Sound is optional on TV browsers. */ }
+    audioRef.current?.tone(frequency, length, delay);
   }, []);
 
   useEffect(() => {
@@ -121,10 +134,7 @@ export function WheelGame() {
     const entries = wheel === "color" ? availableColors(state) : availablePictures(state);
     const entry = entries[randomIndex(entries.length)];
     const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 120 : 5400;
-    if (soundRef.current) {
-      try { audioRef.current ??= new AudioContext(); void audioRef.current.resume().catch(() => {}); }
-      catch { /* The game remains playable without audio. */ }
-    }
+    audioRef.current?.activate();
     dispatch({ type: "spin", wheel, entryId: entry.id, duration });
   }, [ready, resetOpen, state]);
 
@@ -157,13 +167,28 @@ export function WheelGame() {
     requestAnimationFrame(() => document.getElementById("spin-color")?.focus({ preventScroll: true }));
   }
 
+  function toggleSound() {
+    const enabled = !soundRef.current;
+    soundRef.current = enabled;
+    audioRef.current?.configure({ enabled });
+    if (enabled) audioRef.current?.activate();
+    setSound(enabled);
+  }
+
+  function revealAnswer() {
+    if (state.phase !== "color-question" || revealingRef.current) return;
+    revealingRef.current = true;
+    audioRef.current?.playCorrect();
+    dispatch({ type: "reveal" });
+  }
+
   return <main className={`game-shell${tvMode ? " tv-mode" : ""}${spinning ? " wheel-is-spinning" : ""}`}>
     <div className="scene-background" aria-hidden="true"><Image src={backdrop} alt="" fill preload sizes="100vw" /><div className="scene-tint" /></div>
     <header className="topbar">
       <h1 id="game-title">วงล้อ<span>ศิลป์ถิ่นเรา</span></h1>
       <div className="header-actions">
         <button className="glass-button" title="เริ่มใหม่" aria-label="เริ่มใหม่" onClick={() => setResetOpen(true)} disabled={!ready || spinning || showingResult}><Icon name="history" /></button>
-        <button className="glass-button" title={sound ? "ปิดเสียง" : "เปิดเสียง"} aria-label={sound ? "ปิดเสียง" : "เปิดเสียง"} aria-pressed={sound} onClick={() => { soundRef.current = !sound; setSound(!sound); }}><Icon name={sound ? "sound" : "muted"} /></button>
+        <button className="glass-button" data-sound-toggle title={sound ? "ปิดเสียง" : "เปิดเสียง"} aria-label={sound ? "ปิดเสียง" : "เปิดเสียง"} aria-pressed={sound} onClick={toggleSound}><Icon name={sound ? "sound" : "muted"} /></button>
         <button className="glass-button" title={tvMode ? "ออกจากโหมด TV" : "โหมด TV"} aria-label={tvMode ? "ออกจากโหมด TV" : "โหมด TV"} onClick={toggleTvMode} aria-pressed={tvMode}><Icon name={tvMode ? "close" : "expand"} /></button>
       </div>
     </header>
@@ -190,7 +215,7 @@ export function WheelGame() {
 
     <dialog ref={resultDialog} className="result-dialog" onCancel={event => event.preventDefault()} aria-labelledby="result-title" aria-describedby="result-instruction">
       {showingResult && <div className={`result-content ${colorResult ? "color-result" : "image-result"}`}>
-        <div className="result-guide">{!colorResult && <CreamMascot pose={creamPose} placement="result" />}<span className="result-round">รอบที่ {roundNumber} / {TOTAL_ROUNDS} · {colorResult ? "สีที่สุ่มได้" : "ภาพที่สุ่มได้"}</span></div>
+        <div className="result-guide">{!colorResult && <CreamMascot pose={creamPose} placement="result" />}<span className="result-round">รอบที่ {roundNumber} / {TOTAL_ROUNDS} · {colorResult ? "สีที่สุ่มได้" : "ภาพที่สุ่มได้"}</span><button className="glass-button" data-sound-toggle title={sound ? "ปิดเสียง" : "เปิดเสียง"} aria-label={sound ? "ปิดเสียง" : "เปิดเสียง"} aria-pressed={sound} onClick={toggleSound}><Icon name={sound ? "sound" : "muted"} size={18} /></button></div>
         {colorResult && resultColor ? <>
           <div className="color-result-body">
             <CreamMascot pose={creamPose} placement="result" />
@@ -203,7 +228,7 @@ export function WheelGame() {
             </>}</div>
           </div>
           {!revealed
-            ? <button autoFocus className="teacher-button" onClick={() => dispatch({ type: "reveal" })}><Icon name="sparkles" size={28}/> ครู: เฉลยคำตอบ</button>
+            ? <button autoFocus className="teacher-button" onClick={revealAnswer}><Icon name="sparkles" size={28}/> ครู: เฉลยคำตอบ</button>
             : <button autoFocus className="spin-button" onClick={() => dispatch({ type: "continue-color" })}>ไปสุ่มภาพต่อ <Icon name="arrow" size={28}/></button>}
         </> : resultImage && <>
           <div className="result-artwork">{resultImage.imageSrc ? <Image src={resultImage.imageSrc} alt={resultImage.label} fill sizes="(max-width: 700px) 92vw, 760px" /> : <PicturePlaceholder number={PICTURE_ENTRIES.indexOf(resultImage) + 1} size={280} />}</div>

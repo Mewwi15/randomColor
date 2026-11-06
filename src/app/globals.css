@@ -26,6 +26,7 @@ h1 > span { color: #ad371e; }
 .wheel-is-spinning .cream-stage { opacity: 1; }
 .cream-result { position: relative; width: 160px; flex: 0 0 160px; }
 .result-guide { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.result-guide .glass-button { min-width: 36px; min-height: 36px; padding: 0 6px; flex-shrink: 0; }
 .wheel-card { position: absolute; left: 50%; top: 50%; width: var(--focus-wheel-size); aspect-ratio: 1; transform: translate(-50%, -50%); transition: left .55s ease, top .55s ease, width .55s ease; }
 .wheel-card.is-active { z-index: 2; }
 .wheel-card.is-inactive { width: var(--parked-wheel-size); left: calc(100% - var(--parked-wheel-size) / 2 - 26px); z-index: 1; }

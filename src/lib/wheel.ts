@@ -1,4 +1,4 @@
-export type WheelEntry = { id: string; label: string; color: string; imageSrc?: string };
+export type WheelEntry = { id: string; label: string; color: string; imageSrc?: string; wheelLabelLines?: string[] };
 export type SpinResult = WheelEntry & { resultId: string; time: string };
 
 export const WARM_COLORS = ["#EF233C", "#FF7900", "#FFD000", "#E60073"];

@@ -105,6 +105,7 @@ h1 > span { color: #ad371e; }
 .result-artwork > img { max-width: 100%; height: auto; max-height: 32svh; object-fit: contain; }
 .result-artwork > svg { width: min(280px, 30svh); height: auto; }
 .image-result .image-title { margin: 0; font-size: clamp(34px, 4vw, 58px); }
+.image-result .image-title.is-long { max-width: 100%; font-size: clamp(22px, 3vw, 40px); line-height: 1.35; overflow-wrap: anywhere; text-wrap: balance; }
 .image-result .result-artwork { width: 100%; height: 100%; min-height: 0; margin: 0; border-radius: 12px; background: white; overflow: hidden; }
 .image-result .result-artwork > img { width: 100%; height: 100%; max-width: none; max-height: none; aspect-ratio: auto; object-fit: contain; }
 .image-result .result-artwork > svg { width: auto; height: 100%; max-width: 100%; max-height: 100%; }

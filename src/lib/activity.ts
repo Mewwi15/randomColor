@@ -7,16 +7,16 @@ export const ACTIVITY_STORAGE_KEY = "art-local-classroom-v1";
 // Keep this order and the picture IDs stable for saved classroom sessions.
 // Originals are in UI/img; the public copies retain the complete, unedited images.
 const PICTURES = [
-  { label: "หอยนางรม", file: "oysters.png" },
-  { label: "ชักพระ", file: "chak-phra.png" },
-  { label: "ดอกบัวผุด", file: "rafflesia.png" },
-  { label: "หนังตะลุง", file: "shadow-puppet.png" },
-  { label: "ทะเล", file: "seaside.png" },
-  { label: "กรีดยาง", file: "rubber-tapping.png" },
-  { label: "เจดีย์", file: "pagoda.png" },
-  { label: "เงาะ", file: "rambutan.png" },
-  { label: "ผ้าลายดอก", file: "floral-fabric.png" },
-  { label: "ไข่เป็ด", file: "duck-eggs.png" },
+  { label: "🦪 หอยนางรม", file: "oysters.png" },
+  { label: "🚤 เรือพระ", file: "chak-phra.png" },
+  { label: "🌺 ดอกบัวผุด", file: "rafflesia.png" },
+  { label: "🎭 หนังตะลุง", file: "shadow-puppet.png" },
+  { label: "🏝️ เกาะสมุย–เกาะพะงัน–หมู่เกาะอ่างทอง", file: "seaside.png", wheelLabelLines: ["🏝️ เกาะสมุย", "–เกาะพะงัน", "–หมู่เกาะอ่างทอง"] },
+  { label: "🌳 ต้นยางพารา", file: "rubber-tapping.png" },
+  { label: "🛕 พระบรมธาตุไชยา", file: "pagoda.png", wheelLabelLines: ["🛕 พระบรมธาตุ", "ไชยา"] },
+  { label: "🍈 เงาะโรงเรียน", file: "rambutan.png" },
+  { label: "👗 ผ้าปาเต๊ะ", file: "floral-fabric.png" },
+  { label: "🥚 ไข่เค็มไชยา", file: "duck-eggs.png" },
 ];
 
 export const PICTURE_ENTRIES: WheelEntry[] = PICTURES.map((picture, index) => ({
@@ -24,6 +24,7 @@ export const PICTURE_ENTRIES: WheelEntry[] = PICTURES.map((picture, index) => ({
   label: picture.label,
   color: index % 2 === 0 ? "#E8E1FF" : "#FFF8EC",
   imageSrc: `/wheel-images/${picture.file}`,
+  wheelLabelLines: picture.wheelLabelLines,
 }));
 
 export type WheelKind = "color" | "image";

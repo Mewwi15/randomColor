@@ -232,7 +232,7 @@ export function WheelGame() {
             : <button autoFocus className="spin-button" onClick={() => dispatch({ type: "continue-color" })}>ไปสุ่มภาพต่อ <Icon name="arrow" size={28}/></button>}
         </> : resultImage && <>
           <div className="result-artwork">{resultImage.imageSrc ? <Image src={resultImage.imageSrc} alt={resultImage.label} fill sizes="(max-width: 700px) 92vw, 760px" /> : <PicturePlaceholder number={PICTURE_ENTRIES.indexOf(resultImage) + 1} size={280} />}</div>
-          <h2 id="result-title" className="result-title image-title">{resultImage.label}</h2>
+          <h2 id="result-title" className={`result-title image-title${(resultImage.wheelLabelLines?.length ?? 1) > 2 ? " is-long" : ""}`}>{resultImage.label}</h2>
           <p id="result-instruction" className="picture-pair">คู่กับ <span className="color-dot" style={{ background: resultColor?.color }}/><strong>{resultColor?.label}</strong></p>
           <button autoFocus className="spin-button" onClick={() => dispatch({ type: "next-round" })}>{roundNumber === TOTAL_ROUNDS ? "จบกิจกรรม" : "จบรอบนี้ · เล่นรอบถัดไป"}<Icon name="arrow" size={26}/></button>
         </>}

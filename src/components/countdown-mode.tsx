@@ -7,9 +7,11 @@ import countdownFrame from "../../UI/Leafy wooden countdown display frame.png";
 import { CreamMascot } from "./cream-mascot";
 import { Icon } from "./icon";
 import { ModeNavigation } from "./mode-navigation";
+import { ActivityAudio } from "@/lib/activity-audio";
 import { COUNTDOWN_STORAGE_KEY, countdownReducer, formatCountdown, initialCountdown, remainingCountdown, restoreCountdown } from "@/lib/countdown";
 
 const PRESETS = [5, 10, 15, 20, 30];
+const SOUND_STORAGE_KEY = "art-local-countdown-sound-v1";
 
 export function CountdownMode() {
   const [timer, dispatch] = useReducer(countdownReducer, undefined, initialCountdown);
@@ -21,6 +23,8 @@ export function CountdownMode() {
   const [storageAvailable, setStorageAvailable] = useState(true);
   const [fullscreen, setFullscreen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [sound, setSound] = useState(true);
+  const audioRef = useRef<ActivityAudio | null>(null);
   const settingsDialog = useRef<HTMLDialogElement>(null);
   const running = timer.status === "running";
   const finished = timer.status === "finished";
@@ -40,14 +44,55 @@ export function CountdownMode() {
         setSeconds(String(restored.durationMs / 1000 % 60));
       }
     } catch { setStorageAvailable(false); }
+    try { setSound(localStorage.getItem(SOUND_STORAGE_KEY) !== "false"); }
+    catch { /* Music still works if preferences cannot be saved. */ }
     setReady(true);
   }, []);
+
+  useEffect(() => {
+    const audio = new ActivityAudio();
+    audio.configure({ enabled: false, paused: true });
+    audioRef.current = audio;
+    // A restored running timer may need a fresh gesture to unlock playback.
+    const activate = (event: Event) => {
+      if (event.target instanceof Element && event.target.closest("[data-timer-sound-toggle], .timer-start")) return;
+      if (event instanceof KeyboardEvent && (event.repeat || !["Enter", " "].includes(event.key))) return;
+      audio.activate();
+    };
+    document.addEventListener("click", activate, true);
+    document.addEventListener("keydown", activate, true);
+    return () => {
+      document.removeEventListener("click", activate, true);
+      document.removeEventListener("keydown", activate, true);
+      audio.dispose();
+      audioRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const update = () => audioRef.current?.configure({
+      enabled: ready && sound,
+      paused: timer.status !== "running" || remainingCountdown(timer, Date.now()) === 0,
+      complete: timer.status === "idle" || timer.status === "finished",
+      quiet: settingsOpen,
+      visible: !document.hidden,
+    });
+    update();
+    document.addEventListener("visibilitychange", update);
+    return () => document.removeEventListener("visibilitychange", update);
+  }, [timer, ready, sound, settingsOpen]);
 
   useEffect(() => {
     if (!ready) return;
     try { localStorage.setItem(COUNTDOWN_STORAGE_KEY, JSON.stringify(timer)); }
     catch { setStorageAvailable(false); }
   }, [timer, ready]);
+
+  useEffect(() => {
+    if (!ready) return;
+    try { localStorage.setItem(SOUND_STORAGE_KEY, String(sound)); }
+    catch { /* A blocked preference store must not interrupt the countdown. */ }
+  }, [sound, ready]);
 
   useEffect(() => {
     if (!running) return;
@@ -102,8 +147,18 @@ export function CountdownMode() {
   function toggleTimer() {
     const current = Date.now();
     setNow(current);
+    // Start playback inside the button gesture, including on mobile browsers.
+    audioRef.current?.configure({ enabled: sound, paused: running, complete: false, visible: !document.hidden });
+    if (!running) audioRef.current?.activate();
     dispatch({ type: running ? "pause" : "start", now: current });
     setError("");
+  }
+
+  function toggleSound() {
+    const enabled = !sound;
+    setSound(enabled);
+    audioRef.current?.configure({ enabled });
+    if (enabled) audioRef.current?.activate();
   }
 
   async function toggleFullscreen() {
@@ -154,6 +209,7 @@ export function CountdownMode() {
         <div className="timer-dialog-actions"><button type="button" className="glass-button" onClick={() => setSettingsOpen(false)}>ยกเลิก</button><button className="spin-button" type="submit"><Icon name="check"/>บันทึกเวลา</button></div>
       </form>
       <div className="timer-dialog-tools">
+        <button type="button" className="glass-button timer-sound-toggle" data-timer-sound-toggle aria-label="เพลงประกอบระหว่างจับเวลา" aria-pressed={sound} onClick={toggleSound}><Icon name={sound ? "sound" : "muted"}/>{sound ? "เพลงประกอบ: เปิด" : "เพลงประกอบ: ปิด"}</button>
         <button type="button" className="glass-button" onClick={() => { dispatch({ type: "reset" }); setError(""); setSettingsOpen(false); }}><Icon name="history"/>รีเซ็ตเวลาเดิม</button>
         <button type="button" className="glass-button" aria-pressed={fullscreen} onClick={toggleFullscreen}><Icon name={fullscreen ? "close" : "expand"}/>{fullscreen ? "ออกจากเต็มจอ" : "เต็มจอ TV"}</button>
       </div>

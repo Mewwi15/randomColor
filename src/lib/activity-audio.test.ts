@@ -143,3 +143,50 @@ test("HTML audio fallback works without Web Audio and rejected playback does not
   assert.doesNotThrow(() => audio.playCorrect());
   await new Promise(resolve => setImmediate(resolve));
 });
+
+for (const webAudio of [true, false]) {
+  test(`countdown music pauses without rewinding and only restarts from the beginning after completion (${webAudio ? "Web Audio" : "HTML audio"})`, t => {
+    const { audio, music, correct } = setup(t, webAudio);
+    audio.configure({ paused: true });
+    audio.activate();
+    assert.equal(music.plays, 0, "settings interactions before starting must stay silent");
+
+    audio.configure({ paused: false });
+    audio.activate();
+    assert.equal(music.paused, false);
+    music.currentTime = 42;
+    audio.configure({ paused: true });
+    audio.configure({ enabled: false });
+    audio.configure({ enabled: true, quiet: true });
+    audio.activate();
+    assert.equal(music.paused, true, "unmuting in settings must not resume a paused timer's music");
+    assert.equal(music.currentTime, 42);
+
+    audio.configure({ paused: false, quiet: false });
+    audio.activate();
+    assert.equal(music.paused, false);
+    assert.equal(music.currentTime, 42);
+    audio.configure({ paused: true, complete: true });
+    assert.equal(music.paused, true);
+    assert.equal(music.currentTime, 0);
+    audio.configure({ paused: false, complete: false });
+    audio.activate();
+    assert.equal(music.paused, false);
+    assert.equal(music.currentTime, 0);
+    assert.equal(correct.plays, 0, "countdown controls must not trigger the correct-answer cue");
+  });
+}
+
+test("leaving a mode stops active music and later events cannot restart that instance", t => {
+  const { audio, music, contexts } = setup(t);
+  audio.activate();
+  assert.equal(music.paused, false);
+  audio.dispose();
+  const plays = music.plays;
+  audio.configure({ visible: true, enabled: true, paused: false });
+  audio.activate();
+  assert.equal(music.paused, true);
+  assert.equal(music.plays, plays);
+  assert.equal(music.src, "");
+  assert.equal(contexts[0].state, "closed");
+});

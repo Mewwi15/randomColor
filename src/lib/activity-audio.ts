@@ -1,4 +1,4 @@
-type AudioSettings = { enabled: boolean; quiet: boolean; complete: boolean; visible: boolean };
+type AudioSettings = { enabled: boolean; quiet: boolean; complete: boolean; visible: boolean; paused: boolean };
 
 /** Created only in a client effect. Playback is unlocked by a user gesture. */
 export class ActivityAudio {
@@ -10,7 +10,7 @@ export class ActivityAudio {
   private voices = new Set<OscillatorNode>();
   private started = false;
   private disposed = false;
-  private settings: AudioSettings = { enabled: true, quiet: false, complete: false, visible: true };
+  private settings: AudioSettings = { enabled: true, quiet: false, complete: false, visible: true, paused: false };
 
   constructor() {
     this.music.loop = true;
@@ -25,7 +25,7 @@ export class ActivityAudio {
   }
 
   activate() {
-    if (this.disposed || !this.settings.enabled || !this.settings.visible) return;
+    if (this.disposed || !this.settings.enabled || !this.settings.visible || this.settings.paused) return;
     this.started = true;
     if (!this.context) {
       try {
@@ -75,17 +75,17 @@ export class ActivityAudio {
     } else {
       this.music.volume = volume;
     }
-    if (audible && this.started && !this.settings.complete) {
+    if (audible && this.started && !this.settings.complete && !this.settings.paused) {
       if (this.context && this.context.state !== "running" && this.context.state !== "closed") void this.context.resume().catch(() => {});
       this.play(this.music);
     } else this.music.pause();
-    if (!audible || this.settings.complete) this.stopEffects();
+    if (!audible || this.settings.complete || this.settings.paused) this.stopEffects();
     if (this.settings.complete) this.music.currentTime = 0;
   }
 
   playCorrect() {
     this.activate();
-    if (this.disposed || !this.settings.enabled || !this.settings.visible || this.settings.complete) return;
+    if (this.disposed || !this.settings.enabled || !this.settings.visible || this.settings.complete || this.settings.paused) return;
     this.correct.pause();
     this.correct.currentTime = 0;
     this.play(this.correct);
@@ -93,7 +93,7 @@ export class ActivityAudio {
 
   tone(frequency: number, length = 0.07, delay = 0) {
     const context = this.context;
-    if (this.disposed || !this.settings.enabled || !this.settings.visible || context?.state !== "running") return;
+    if (this.disposed || !this.settings.enabled || !this.settings.visible || this.settings.paused || context?.state !== "running") return;
     try {
       const oscillator = context.createOscillator();
       const gain = context.createGain();

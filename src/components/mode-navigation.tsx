@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Icon } from "./icon";
 
-export function ModeNavigation({ current, disabled = false }: { current: "wheel" | "timer"; disabled?: boolean }) {
+export function ModeNavigation({ current, disabled = false }: { current: "wheel" | "timer" | "slides"; disabled?: boolean }) {
   return <nav className="mode-navigation" aria-label="เลือกโหมดกิจกรรม">
-    {([{ mode: "wheel", href: "/", label: "วงล้อ", icon: "sparkles" }, { mode: "timer", href: "/timer", label: "จับเวลา", icon: "timer" }] as const).map(item =>
+    {([{ mode: "wheel", href: "/", label: "วงล้อ", icon: "sparkles" }, { mode: "timer", href: "/timer", label: "จับเวลา", icon: "timer" }, { mode: "slides", href: "/slides", label: "สไลด์", icon: "slides" }] as const).map(item =>
       item.mode === current
         ? <span key={item.mode} className="mode-option is-current" aria-current="page"><Icon name={item.icon} size={18}/>{item.label}</span>
         : disabled

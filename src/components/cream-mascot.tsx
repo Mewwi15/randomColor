@@ -9,7 +9,7 @@ import celebrate from "../../UI/cream/df5d302e-ae0a-455c-afe1-93ccef91ebc1.png";
 const POSES = { welcome, guide, suspense, thinking, encourage, celebrate };
 export type CreamPose = keyof typeof POSES;
 
-export function CreamMascot({ pose, placement = "stage" }: { pose: CreamPose; placement?: "stage" | "result" }) {
+export function CreamMascot({ pose, placement = "stage" }: { pose: CreamPose; placement?: "stage" | "result" | "timer" }) {
   return <div className={`cream-mascot cream-${placement}`} aria-hidden="true" data-pose={pose}>
     {Object.entries(POSES).map(([name, source]) => <Image
       key={name}
@@ -17,7 +17,7 @@ export function CreamMascot({ pose, placement = "stage" }: { pose: CreamPose; pl
       alt=""
       width={330}
       height={495}
-      sizes={placement === "result" ? "(max-width: 700px) 40vw, 280px" : "(max-aspect-ratio: 1/1) 96px, (max-width: 1100px) 220px, 330px"}
+      sizes={placement === "timer" ? "(max-width: 700px) 110px, (max-width: 1100px) 240px, 340px" : placement === "result" ? "(max-width: 700px) 40vw, 280px" : "(max-aspect-ratio: 1/1) 96px, (max-width: 1100px) 220px, 330px"}
       loading="eager"
       className={name === pose ? "cream-pose is-visible" : "cream-pose"}
       draggable={false}

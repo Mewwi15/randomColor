@@ -12,14 +12,21 @@ button svg { flex-shrink: 0; }
 .scene-background { position: absolute; inset: 0; z-index: -2; background: #48baf2; }
 .scene-background > img { object-fit: cover; object-position: center 54%; }
 .scene-tint { position: absolute; inset: 0; background: radial-gradient(ellipse at center, #68b8e013, #12457355); }
-.topbar { position: absolute; top: 0; left: 0; right: 0; z-index: 5; padding: 20px 30px; display: flex; align-items: center; justify-content: space-between; gap: 15px; pointer-events: none; }
+.topbar { position: absolute; top: 0; left: 0; right: 0; z-index: 5; padding: 20px 30px; display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; pointer-events: none; }
+.brand-modes { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0; }
+.mode-navigation { display: flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid #fff8; border-radius: 14px; background: #fffcf4; box-shadow: 0 3px 12px #183b5e25; pointer-events: auto; }
+.mode-option { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 12px; border-radius: 10px; color: #473368; text-decoration: none; font-weight: 700; font-size: 15px; white-space: nowrap; }
+.mode-option.is-current { background: #6942a4; color: white; }
+.mode-option[href]:hover { background: #f0e7ff; }
+.mode-option[aria-disabled="true"] { opacity: .5; }
+.mode-option:focus-visible, .timer-custom input:focus-visible { outline: 4px solid #6734b0; outline-offset: 3px; }
 h1 { flex-shrink: 0; font-size: clamp(26px, 2.3vw, 44px); line-height: 1.45; margin: 0; padding: 8px 20px; font-weight: 800; color: #36205f; background: #fff9e9; border: 3px solid #ffc94f; border-radius: 18px; box-shadow: 0 4px 0 #bd7c28, 0 6px 20px #16365330; white-space: nowrap; }
 h1 > span { color: #ad371e; }
 .header-actions { display: flex; gap: 8px; pointer-events: auto; }
 .glass-button { display: inline-flex; gap: 8px; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 12px; border: 1px solid #ffffffb0; color: #285174; background: #ffffffdd; box-shadow: 0 3px 12px #195d9220; border-radius: 13px; font-size: 14px; font-weight: 700; }
 .glass-button:hover:not(:disabled) { transform: translateY(-2px); background: white; }
 .wheel-stage { position: absolute; inset: 0; }
-.cream-mascot { aspect-ratio: 2 / 3; pointer-events: none; user-select: none; }
+.cream-mascot { aspect-ratio: 2 / 3; pointer-events: none; user-select: none; transform-origin: 50% 95%; animation: cream-sway 4s ease-in-out infinite; }
 .cream-pose { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity .25s ease; }
 .cream-pose.is-visible { opacity: 1; }
 .cream-stage { position: absolute; bottom: 28px; left: 20px; width: min(22vw, 330px, calc((100vw - var(--focus-wheel-size)) / 2 - 40px)); z-index: 1; transition: opacity .3s ease; }
@@ -123,14 +130,84 @@ h1 > span { color: #ad371e; }
 
 @keyframes twinkle { to { opacity: .45; } }
 @keyframes confetti-fall { to { transform: translate(25px, 750px) rotate(var(--tilt)); } }
+@keyframes cream-sway { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-7px) rotate(1.5deg); } }
+
+/* The timer is a separate activity with its own saved deadline and controls. */
+.timer-shell { height: auto; min-height: 100svh; display: flex; flex-direction: column; overflow: clip; }
+.timer-shell .topbar { position: relative; flex-shrink: 0; }
+.timer-workspace { flex: 1; width: min(1600px, 100%); margin: 0 auto; padding: 0 32px 24px; display: grid; grid-template-columns: minmax(160px, .65fr) minmax(0, 2fr); grid-template-rows: 1fr auto; grid-template-areas: "mascot clock" "instruction instruction"; gap: clamp(12px, 2svh, 24px); align-items: center; }
+.timer-mascot { grid-area: mascot; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.timer-cheer { position: relative; max-width: 100%; margin-bottom: 12px; padding: 12px 16px; border: 3px solid #d5b8ff; border-radius: 24px 24px 24px 6px; background: #fffdf7; color: #4e2c7b; font-size: clamp(15px, 1.5vw, 23px); line-height: 1.6; font-weight: 700; text-align: center; box-shadow: 0 6px 20px #153d6a20; }
+.cream-timer { position: relative; width: min(100%, 30svh, 340px); filter: drop-shadow(0 10px 5px #24466c30); }
+.countdown-card { grid-area: clock; min-width: 0; align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; gap: clamp(10px, 1.5svh, 18px); padding: clamp(16px, 2.4vw, 34px); border: 4px solid #ffdb7e; border-radius: 34px; background: #fffdf8; box-shadow: 0 7px 0 #c88737, 0 14px 38px #23426430; }
+.countdown-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; width: 100%; }
+.countdown-heading h2 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: clamp(18px, 1.8vw, 28px); color: #51317b; }
+.timer-status { border-radius: 999px; padding: 5px 12px; background: #f0e8fb; color: #674591; font-size: clamp(12px, 1.15vw, 17px); font-weight: 700; }
+.timer-status.status-running { background: #e0f5e9; color: #176b44; }
+.timer-status.status-finished { background: #ffe5cd; color: #a23b12; }
+.timer-clock { text-align: center; width: 100%; }
+.timer-digits { font-family: Arial, Helvetica, sans-serif; font-size: clamp(80px, min(18vw, 22svh), 280px); font-weight: 800; font-variant-numeric: tabular-nums lining-nums; letter-spacing: -.035em; line-height: 1.08; color: #263756; white-space: nowrap; }
+.timer-units { display: block; font-size: clamp(13px, 1.3vw, 20px); font-weight: 600; color: #656379; }
+.timer-clock.is-ending .timer-digits, .timer-finished .timer-digits { color: #b13d24; }
+.timer-progress { width: 100%; height: 10px; border-radius: 999px; background: #eee6dc; overflow: hidden; }
+.timer-progress > div { width: 100%; height: 100%; transform-origin: left center; background: linear-gradient(90deg, #8d57c5, #e86970, #f4b745); transition: transform .2s linear; border-radius: inherit; }
+.timer-controls { display: flex; align-items: center; justify-content: center; gap: 14px; width: 100%; }
+.timer-start { width: min(330px, 70%); min-height: 56px; }
+.timer-reset { min-height: 52px; padding: 10px 18px; background: #f1e9fc; color: #583781; border: 2px solid #dac7ee; font-size: 17px; }
+.timer-settings { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px 20px; width: 100%; margin-top: 4px; }
+.timer-presets { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; }
+.timer-presets button { min-height: 40px; padding: 6px 10px; border-radius: 11px; border: 2px solid #e4d8f0; background: #fff; color: #624284; font-size: 14px; font-weight: 700; }
+.timer-presets button[aria-pressed="true"] { border-color: #8150b6; background: #ede1fb; color: #4c2576; }
+.timer-custom { display: flex; align-items: flex-end; justify-content: center; gap: 8px; }
+.timer-custom label { display: grid; gap: 3px; color: #625870; text-align: center; font-size: 12px; font-weight: 700; }
+.timer-custom input { width: 58px; min-height: 40px; padding: 5px; border: 2px solid #d9c8ea; border-radius: 10px; background: white; color: #263756; text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 21px; font-weight: 700; }
+.timer-custom input:disabled { opacity: .6; background: #f3f0f6; }
+.timer-custom > span { padding-bottom: 9px; font-weight: 800; }
+.timer-custom .glass-button { min-height: 40px; border: 2px solid #d9c8ea; color: #583781; background: #f3edfb; }
+.timer-error { margin: 0; color: #aa3120; font-size: 14px; text-align: center; }
+.coloring-instruction { grid-area: instruction; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 22px; padding: clamp(14px, 2svh, 24px) 24px; border: 3px solid #ffe09a; border-radius: 25px; background: #fff9ed; box-shadow: 0 6px 0 #d29c54, 0 12px 30px #1e3e5b26; }
+.instruction-marker { display: grid; place-items: center; flex-shrink: 0; width: 72px; height: 72px; border-radius: 22px; color: #7044a4; background: #f0e4ff; transform: rotate(-8deg); }
+.coloring-instruction p { margin: 0; color: #382457; text-align: center; font-size: clamp(24px, 2.5vw, 44px); line-height: 1.5; font-weight: 800; }
+.coloring-instruction p > span, .coloring-instruction strong { display: block; }
+.coloring-instruction strong { color: #a43a20; }
+.timer-storage-notice { margin: 0; padding: 10px 16px; background: #fff4d1; color: #724d22; font-size: 13px; text-align: center; }
+
+@media (max-height: 760px) and (min-width: 701px) {
+  .timer-shell .topbar { padding: 12px 22px; }
+  .timer-workspace { padding: 0 22px 16px; gap: 12px; }
+  .countdown-card { padding: 16px 20px; gap: 8px; }
+  .timer-digits { font-size: clamp(76px, min(17vw, 19svh), 180px); }
+  .timer-controls .spin-button, .timer-reset { min-height: 46px; padding-block: 8px; }
+  .coloring-instruction { padding: 10px 18px; }
+  .coloring-instruction p { font-size: 25px; }
+}
 /* Portrait screens park the second wheel in the bottom corner. */
 @media (max-aspect-ratio: 1/1) {
   :root { --focus-wheel-size: min(calc(100svh - 340px), calc(100vw - 40px), 800px); --parked-wheel-size: clamp(76px, 18vw, 130px); }
-  .wheel-card { top: 43%; }
+  .wheel-card { top: 50%; }
   .wheel-card.is-inactive { top: calc(100% - var(--parked-wheel-size) / 2 - 20px); left: calc(100% - var(--parked-wheel-size) / 2 - 20px); }
   .cream-stage { width: clamp(60px, 18vw, 96px); left: 14px; bottom: 14px; }
 }
 @media (max-width: 700px) {
+  .brand-modes { gap: 6px; }
+  .mode-navigation { padding: 3px; gap: 2px; border-radius: 12px; }
+  .mode-option { font-size: 13px; padding: 5px 8px; gap: 5px; }
+  .mode-option svg { width: 16px; height: 16px; }
+  .timer-workspace { padding: 4px 12px 20px; grid-template-columns: 88px minmax(0, 1fr); grid-template-rows: auto 1fr; grid-template-areas: "mascot instruction" "clock clock"; gap: 14px 8px; }
+  .timer-cheer { display: none; }
+  .cream-timer { width: 100%; }
+  .countdown-card { padding: 18px 14px; gap: 14px; border-radius: 26px; }
+  .countdown-heading { justify-content: center; gap: 5px 12px; }
+  .countdown-heading h2 { font-size: 18px; }
+  .timer-digits { font-size: clamp(72px, 23vw, 130px); }
+  .timer-controls { gap: 10px; }
+  .timer-controls .spin-button { min-height: 50px; padding: 10px 12px; font-size: 19px; }
+  .timer-reset { min-height: 46px; padding: 8px 12px; font-size: 15px; }
+  .timer-presets { gap: 5px; }
+  .timer-presets button { padding: 6px 8px; font-size: 13px; }
+  .coloring-instruction { padding: 14px 10px; border-radius: 20px; }
+  .coloring-instruction p { font-size: clamp(18px, 4.7vw, 25px); }
+  .instruction-marker { display: none; }
   .result-guide { gap: 10px; }
   .topbar { padding: 12px 10px; gap: 6px; }
   h1 { font-size: clamp(20px, 4.6vw, 30px); padding: 6px 10px; border-width: 2px; border-radius: 12px; }

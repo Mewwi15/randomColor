@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import backdrop from "../../UI/Welcome/bg.png";
 import { Icon } from "./icon";
+import { ModeNavigation } from "./mode-navigation";
 import { LuckyWheel } from "./lucky-wheel";
 import { PicturePlaceholder } from "./picture-placeholder";
 import { CreamMascot, type CreamPose } from "./cream-mascot";
@@ -105,7 +106,8 @@ export function WheelGame() {
   }, [resetOpen]);
 
   useEffect(() => {
-    const onFullscreen = () => { if (!document.fullscreenElement) setTvMode(false); };
+    const onFullscreen = () => setTvMode(Boolean(document.fullscreenElement));
+    onFullscreen();
     document.addEventListener("fullscreenchange", onFullscreen);
     return () => document.removeEventListener("fullscreenchange", onFullscreen);
   }, []);
@@ -185,7 +187,7 @@ export function WheelGame() {
   return <main className={`game-shell${tvMode ? " tv-mode" : ""}${spinning ? " wheel-is-spinning" : ""}`}>
     <div className="scene-background" aria-hidden="true"><Image src={backdrop} alt="" fill preload sizes="100vw" /><div className="scene-tint" /></div>
     <header className="topbar">
-      <h1 id="game-title">วงล้อ<span>ศิลป์ถิ่นเรา</span></h1>
+      <div className="brand-modes"><h1 id="game-title">วงล้อ<span>ศิลป์ถิ่นเรา</span></h1><ModeNavigation current="wheel" disabled={spinning}/></div>
       <div className="header-actions">
         <button className="glass-button" title="เริ่มใหม่" aria-label="เริ่มใหม่" onClick={() => setResetOpen(true)} disabled={!ready || spinning || showingResult}><Icon name="history" /></button>
         <button className="glass-button" data-sound-toggle title={sound ? "ปิดเสียง" : "เปิดเสียง"} aria-label={sound ? "ปิดเสียง" : "เปิดเสียง"} aria-pressed={sound} onClick={toggleSound}><Icon name={sound ? "sound" : "muted"} /></button>

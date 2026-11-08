@@ -1,0 +1,305 @@
+/* Shared layout follows the available screen, including browser bars and notches. */
+:root {
+  --app-height: 100vh;
+  --slides-reserved: 320px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --dialog-height: min(840px, calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 30px));
+}
+@supports (height: 100svh) { :root { --app-height: 100svh; } }
+@supports (height: 100dvh) { :root { --app-height: 100dvh; } }
+html, body { width: 100%; min-width: 0; min-height: 100%; }
+body { overflow-x: clip; }
+.game-shell { display: flex; flex-direction: column; width: 100%; height: var(--app-height); min-height: 0; }
+.game-shell .topbar {
+  position: relative; flex-shrink: 0; display: grid;
+  grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand actions" "modes modes";
+  align-items: center; gap: 10px 16px;
+  padding: calc(14px + var(--safe-top)) calc(20px + var(--safe-right)) 12px calc(20px + var(--safe-left));
+}
+.brand-modes { display: contents; }
+.topbar h1 { grid-area: brand; justify-self: start; min-width: 0; max-width: 100%; font-size: clamp(22px, 2.3vw, 44px); line-height: 1.3; padding: 8px 14px; }
+.mode-navigation { grid-area: modes; justify-self: start; min-width: 0; max-width: 100%; }
+.mode-option { min-height: 44px; padding: 6px 12px; font-size: 15px; }
+.header-actions { grid-area: actions; align-self: center; gap: 6px; }
+.header-actions .glass-button { min-width: 44px; min-height: 44px; padding-inline: 10px; }
+.header-actions .glass-button > svg { width: 21px; height: 21px; }
+.result-guide .glass-button, .timer-settings-heading > .glass-button, .slide-pager .glass-button { min-width: 44px; min-height: 44px; }
+.timer-presets button { min-height: 44px; }
+.glass-button, .mode-option, .slide-thumbnail { touch-action: manipulation; }
+
+/* Size wheels from the space below the header rather than the whole viewport. */
+.wheel-stage {
+  position: relative; inset: auto; flex: 1; min-height: 0; width: 100%; container-type: size;
+  --focus-wheel-size: min(calc(100cqw - 48px), calc(100cqh - 168px), 1600px);
+  --parked-wheel-size: clamp(80px, 12cqw, 230px);
+}
+.wheel-card { top: calc(50% - 8px); }
+.wheel-card.is-inactive { top: 50%; left: calc(100% - var(--parked-wheel-size) / 2 - max(16px, var(--safe-right))); }
+.select-wheel-overlay > span { max-width: 100%; padding: 5px 6px; font-size: clamp(11px, 1vw, 17px); }
+.cream-stage { left: max(16px, var(--safe-left)); bottom: calc(20px + var(--safe-bottom)); width: clamp(72px, calc((100cqw - var(--focus-wheel-size)) / 2 - 32px), 330px); }
+.wheel-label { bottom: calc(100% + 26px); font-size: clamp(19px, 1.7vw, 32px); line-height: 1.4; }
+.wheel-card.is-active .wheel-hub { min-width: 44px; min-height: 44px; }
+.stage-spin-button {
+  --spin-x: -50%; --spin-y: 0px;
+  top: calc(100% + 22px); width: min(330px, calc(100vw - 32px)); min-height: 56px;
+  transform: translate(var(--spin-x), var(--spin-y)); font-size: clamp(18px, 1.6vw, 26px); line-height: 1.4;
+}
+.stage-spin-button:hover:not(:disabled) { transform: translate(var(--spin-x), calc(var(--spin-y) - 2px)) !important; }
+.stage-spin-button:active:not(:disabled) { transform: translate(var(--spin-x), calc(var(--spin-y) + 3px)) !important; }
+.storage-notice { left: calc(12px + var(--safe-left)); bottom: calc(8px + var(--safe-bottom)); }
+
+/* The answer card always fits the screen; only settings dialogs may scroll. */
+.result-dialog, .reset-dialog, .timer-settings-dialog {
+  max-width: calc(100vw - var(--safe-left) - var(--safe-right) - 24px);
+  max-height: calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 24px);
+  overscroll-behavior: contain;
+}
+.result-dialog { width: min(960px, calc(100vw - var(--safe-left) - var(--safe-right) - 24px)); overflow: hidden; }
+.result-content, .image-result { height: var(--dialog-height); max-height: var(--dialog-height); min-height: 0; }
+.result-guide { width: 100%; min-width: 0; }
+.result-round { min-width: 0; }
+.tone-answer.both > strong { flex-wrap: wrap; white-space: normal; }
+.tone-answer.both > strong > span { white-space: nowrap; }
+.result-dialog:has(.image-result) { width: min(960px, calc(100vw - var(--safe-left) - var(--safe-right) - 24px)); }
+.image-result .image-title { max-width: 100%; overflow-wrap: anywhere; text-wrap: balance; }
+.picture-pair { flex-wrap: wrap; }
+.timer-settings-dialog { scrollbar-width: thin; }
+.timer-custom input { max-width: 28vw; }
+.reset-dialog > div { flex-wrap: wrap; }
+
+/* Keep the timer frame centered, with room reserved for the start button. */
+.timer-workspace {
+  display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto;
+  gap: 16px; padding: 0 calc(20px + var(--safe-right)) calc(20px + var(--safe-bottom)) calc(20px + var(--safe-left));
+}
+.countdown-stage { grid-area: 1 / 1; height: auto; min-height: 0; gap: 16px; padding: 8px 0; container-type: size; }
+.countdown-frame { width: min(78cqw, calc((100cqh - 84px) * 1920 / 819), 2000px); }
+.timer-start { width: min(340px, 80cqw); min-height: 56px; padding: 10px 20px; line-height: 1.4; }
+.timer-mascot { left: calc(20px + var(--safe-left)); top: 42%; width: clamp(72px, 9vw, 260px); }
+.coloring-instruction { grid-area: 2 / 1; justify-self: center; width: min(1200px, 88%); padding: 10px 20px; }
+.coloring-instruction p { font-size: clamp(23px, 2.2vw, 42px); }
+.timer-digits { font-size: clamp(30px, 20cqw, 360px); }
+.timer-status { font-size: clamp(9px, 1.8cqw, 30px); }
+.timer-units { font-size: clamp(8px, 1.25cqw, 22px); }
+.timer-clock { gap: clamp(1px, .4cqw, 8px); }
+@container (max-width: 360px) { .timer-digits { font-size: 18cqw; } }
+@container (max-width: 220px) { .timer-status, .timer-units { display: none; } }
+
+.slides-stage { padding: 12px calc(20px + var(--safe-right)) 12px calc(20px + var(--safe-left)); }
+.slides-toolbar { padding-inline: calc(20px + var(--safe-left)) calc(20px + var(--safe-right)); }
+.slides-filmstrip { padding: 10px calc(20px + var(--safe-right)) calc(10px + var(--safe-bottom)) calc(20px + var(--safe-left)); scroll-padding-inline: 20px; }
+.slide-thumbnail { flex-basis: 150px; }
+.presentation-controls { bottom: calc(12px + var(--safe-bottom)); max-width: calc(100vw - var(--safe-left) - var(--safe-right) - 24px); }
+.slides-shell.is-presenting .slides-stage { padding: 0; }
+
+/* Compact portrait screens: clear branding, full-width navigation, large touch targets. */
+@media (max-width: 600px) {
+  .game-shell .topbar { gap: 8px; padding: calc(10px + var(--safe-top)) calc(10px + var(--safe-right)) 8px calc(10px + var(--safe-left)); }
+  .topbar h1 { padding: 6px 8px; font-size: clamp(19px, 5vw, 26px); border-width: 2px; border-radius: 12px; }
+  .topbar h1 > span { display: block; }
+  .mode-navigation { justify-self: stretch; padding: 3px; gap: 3px; border-radius: 12px; }
+  .mode-option { flex: 1; min-width: 0; padding: 5px 6px; font-size: 14px; gap: 5px; }
+  .mode-option svg { width: 17px; height: 17px; }
+  .header-actions { gap: 4px; }
+  .header-actions .glass-button { padding: 0; width: 44px; border-radius: 12px; }
+  .slides-shell .slides-present-button { min-width: 48px; width: 48px; padding: 0; }
+  .slides-present-button > span { display: none; }
+  .wheel-frame { padding: 13px; border-width: 2px; }
+  .wheel-hub { border-width: 4px; outline-width: 2px; }
+  .wheel-hub > b { font-size: clamp(14px, 4vw, 18px); }
+  .wheel-pointer { width: 32px; height: 44px; top: -13px; }
+  .wheel-lights > i::after { width: 4px; height: 4px; }
+  .stage-spin-button { top: calc(100% + 18px); min-height: 52px; padding: 10px 14px; font-size: 18px; }
+  .result-dialog { border-radius: 20px; }
+  .result-content { padding: 12px; gap: 8px; }
+  .result-round { font-size: 14px; }
+  .result-guide { gap: 8px; }
+  .color-result-body { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "mascot choice" "prompt prompt"; gap: 10px; }
+  .color-result-body > .cream-result { max-height: 300px; }
+  .color-choice { flex-direction: column; align-self: center; gap: 8px; }
+  .color-choice .result-title { font-size: clamp(30px, 8.5vw, 54px); }
+  .result-color-swatch { width: clamp(40px, 10vw, 64px); border-radius: 14px; }
+  .question-text { font-size: clamp(21px, 5.2vw, 28px); }
+  .teacher-hint, .retirement-note { font-size: 14px; margin-top: 6px; }
+  .tone-answer { padding: 8px 10px; }
+  .tone-answer > strong { font-size: clamp(30px, 8vw, 44px); }
+  .tone-answer.both > strong { font-size: clamp(19px, 5vw, 28px); gap: 5px; }
+  .result-content > .spin-button, .result-content > .teacher-button { width: 100%; min-width: 0; min-height: 52px; padding: 8px 10px; font-size: 18px; gap: 8px; }
+  .image-result { padding: 10px 12px; gap: 6px; }
+  .image-result .cream-result { width: 40px; flex-basis: 40px; }
+  .image-result .image-title { font-size: clamp(25px, 7vw, 36px); line-height: 1.3; }
+  .image-result .image-title.is-long { font-size: clamp(19px, 5.3vw, 28px); }
+  .image-result .picture-pair { font-size: 20px; gap: 8px; }
+  .reset-dialog { padding: 20px; }
+  .reset-dialog > h2 { font-size: 24px; }
+  .reset-dialog > div { flex-direction: column-reverse; }
+  .reset-dialog > div > button { width: 100%; min-height: 48px; }
+  .timer-settings-dialog { padding: 18px 14px; border-radius: 20px; }
+  .timer-settings-heading { gap: 8px; }
+  .timer-settings-heading h2 { font-size: 18px; gap: 6px; }
+  .timer-dialog-tools .glass-button { font-size: 13px; min-height: 48px; }
+  .timer-custom { gap: 12px; }
+  .timer-presets { gap: 6px; }
+  .timer-presets button { flex: 1 1 75px; }
+  .slides-stage { padding: 8px calc(10px + var(--safe-right)) 8px calc(10px + var(--safe-left)); }
+  .slides-toolbar { grid-template-columns: 1fr; padding: 6px 12px; }
+  .slides-caption, .slides-key-hint { display: none; }
+  .slides-filmstrip { gap: 8px; padding: 8px calc(10px + var(--safe-right)) calc(8px + var(--safe-bottom)) calc(10px + var(--safe-left)); }
+  .slide-thumbnail { flex-basis: 108px; }
+}
+
+/* Phone and iPad portrait keep the decorative elements out of the central wheel. */
+@media (max-aspect-ratio: 1/1) {
+  .wheel-stage { --focus-wheel-size: min(calc(100cqw - 32px), calc(100cqh - 160px), 1000px); --parked-wheel-size: clamp(64px, 15cqw, 110px); }
+  .wheel-card.is-inactive { top: calc(var(--parked-wheel-size) / 2 + 6px); left: calc(100% - var(--parked-wheel-size) / 2 - max(10px, var(--safe-right))); }
+  .cream-stage { left: max(10px, var(--safe-left)); top: 6px; bottom: auto; width: clamp(48px, 12cqw, 100px); }
+  .timer-workspace { grid-template-columns: clamp(64px, 14vw, 120px) minmax(0, 1fr); gap: 12px; padding: 0 calc(12px + var(--safe-right)) calc(12px + var(--safe-bottom)) calc(12px + var(--safe-left)); }
+  .countdown-stage { grid-area: 1 / 1 / 2 / -1; gap: 12px; }
+  .countdown-frame { width: min(100cqw, calc((100cqh - 80px) * 1920 / 819)); }
+  .timer-mascot { grid-area: 2 / 1; position: static; width: 100%; transform: none; align-self: center; }
+  .coloring-instruction { grid-area: 2 / 2; width: 100%; padding: 10px; border-radius: 16px; align-self: center; }
+  .coloring-instruction p { font-size: clamp(18px, 3.5vw, 30px); line-height: 1.45; }
+}
+
+@media (min-width: 900px) {
+  .game-shell .topbar { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "brand modes actions"; }
+  .mode-navigation { justify-self: center; }
+}
+
+/* Short landscape screens put the spin button alongside the wheel. */
+@media (max-height: 600px) and (min-aspect-ratio: 6/5) {
+  .game-shell .topbar { padding: calc(6px + var(--safe-top)) calc(12px + var(--safe-right)) 6px calc(12px + var(--safe-left)); gap: 6px 8px; }
+  .topbar h1 { font-size: 18px; padding: 5px 8px; line-height: 1.2; border-width: 2px; }
+  .topbar h1 > span { display: inline; }
+  .mode-navigation { padding: 2px; gap: 2px; }
+  .mode-option { min-height: 44px; padding: 4px 6px; font-size: 12px; gap: 4px; }
+  .mode-option svg { width: 15px; height: 15px; }
+  .wheel-stage { --focus-wheel-size: min(calc(100cqh - 24px), calc(100cqw - 300px), 600px); --parked-wheel-size: 68px; }
+  .wheel-card { top: 50%; }
+  .wheel-label { display: none; }
+  .wheel-card.is-inactive { top: 42px; left: calc(100% - 52px - var(--safe-right)); }
+  .cream-stage { top: auto; bottom: 8px; left: calc(16px + var(--safe-left)); width: min(100px, 16cqw); }
+  .stage-spin-button { --spin-x: 0px; --spin-y: -50%; left: calc(100% + 20px); top: 60%; width: min(160px, calc((100cqw - var(--focus-wheel-size)) / 2 - 40px - var(--safe-right))); min-height: 48px; padding: 8px; gap: 6px; font-size: 16px; white-space: normal; }
+  .stage-spin-button > svg { width: 20px; height: 20px; }
+  .wheel-frame { padding: 12px; }
+  .wheel-pointer { width: 28px; height: 38px; top: -10px; }
+  .wheel-hub { border-width: 3px; }
+  .wheel-hub > span { font-size: 18px; }
+  .wheel-hub > b { font-size: 14px; }
+  .timer-workspace { gap: 8px; padding-bottom: calc(8px + var(--safe-bottom)); }
+  .countdown-stage { gap: 8px; padding: 0; }
+  .countdown-frame { width: min(76cqw, calc((100cqh - 64px) * 1920 / 819)); }
+  .timer-start { min-height: 48px; padding: 6px 12px; width: min(260px, 70cqw); font-size: 18px; }
+  .coloring-instruction { padding: 6px 12px; width: min(900px, 90%); }
+  .coloring-instruction p { font-size: 18px; line-height: 1.35; }
+  .timer-mascot { top: 38%; width: clamp(64px, 9vw, 110px); }
+  .result-content { padding: 8px 14px; gap: 6px; }
+  .result-round { font-size: 13px; }
+  .color-result-body { grid-template-columns: minmax(0, .65fr) minmax(0, 1.45fr); grid-template-rows: auto auto; grid-template-areas: "mascot choice" "mascot prompt"; align-content: center; gap: 6px 14px; }
+  .color-choice { flex-direction: row; gap: 10px; }
+  .color-choice .result-title { font-size: clamp(28px, 8vh, 42px); }
+  .result-color-swatch { width: 36px; border-radius: 12px; border-width: 3px; }
+  .question-text { font-size: 20px; }
+  .teacher-hint, .retirement-note { font-size: 12px; margin-top: 4px; }
+  .tone-answer { padding: 4px 8px; border-radius: 12px; }
+  .tone-answer > span { font-size: 12px; }
+  .tone-answer > strong { font-size: 30px; }
+  .tone-answer.both > strong { font-size: 22px; gap: 5px; }
+  .result-content > .spin-button, .result-content > .teacher-button { min-height: 48px; padding: 6px 12px; font-size: 16px; }
+  .image-result { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto auto; padding: 8px 14px; gap: 6px 14px; }
+  .image-result .result-guide { grid-column: 1 / -1; }
+  .image-result .cream-result { width: 30px; flex-basis: 30px; }
+  .image-result .result-artwork { grid-area: 2 / 1 / 5 / 2; }
+  .image-result .image-title { grid-area: 2 / 2; font-size: 26px; }
+  .image-result .image-title.is-long { font-size: 21px; }
+  .image-result .picture-pair { grid-area: 3 / 2; font-size: 18px; }
+  .image-result > .spin-button { grid-area: 4 / 2; font-size: 16px; gap: 6px; }
+  .slides-stage { padding-block: 4px; }
+  .slides-toolbar { grid-template-columns: 1fr; padding-block: 4px; }
+  .slides-caption, .slides-key-hint { display: none; }
+  .slides-filmstrip { gap: 8px; padding-top: 5px; padding-bottom: calc(5px + var(--safe-bottom)); }
+  .slide-thumbnail { flex-basis: 92px; gap: 2px; border-width: 2px; padding: 2px; }
+  .slide-thumbnail-number { font-size: 11px; }
+}
+@media (max-height: 600px) and (min-width: 640px) and (min-aspect-ratio: 6/5) {
+  .game-shell .topbar { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "brand modes actions"; }
+  .mode-navigation { justify-self: center; }
+}
+@media (max-height: 600px) and (min-width: 520px) and (min-aspect-ratio: 6/5) {
+  .timer-shell .topbar, .slides-shell .topbar { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "brand modes actions"; }
+  .timer-shell .mode-navigation, .slides-shell .mode-navigation { justify-self: center; }
+}
+
+/* TV and large monitors keep the controls and teaching text readable at a distance. */
+@media (min-width: 1800px) and (min-height: 900px) {
+  :root { --dialog-height: min(1280px, calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 70px)); }
+  .game-shell .topbar { padding: calc(20px + var(--safe-top)) calc(32px + var(--safe-right)) 20px calc(32px + var(--safe-left)); gap: 20px; }
+  .topbar h1 { font-size: clamp(40px, 1.6vw, 60px); }
+  .mode-option { min-height: 56px; font-size: 20px; padding-inline: 20px; }
+  .header-actions .glass-button { min-width: 56px; min-height: 56px; }
+  .timer-shell .header-actions .timer-settings-trigger { width: 56px; min-width: 56px; min-height: 56px; }
+  .wheel-stage { --focus-wheel-size: min(calc(100cqw - 96px), calc(100cqh - 220px), 1600px); }
+  .wheel-label { font-size: 36px; }
+  .stage-spin-button { width: 440px; min-height: 80px; font-size: 32px; top: calc(100% + 28px); }
+  .result-dialog, .result-dialog:has(.image-result) { width: min(1400px, calc(100vw - 96px)); }
+  .result-content { padding: 32px 44px; gap: 20px; }
+  .result-round { font-size: 28px; }
+  .color-result-body > .cream-result { max-height: 700px; }
+  .color-choice .result-title { font-size: clamp(96px, 6vw, 160px); }
+  .question-text { font-size: 48px; }
+  .teacher-hint, .retirement-note { font-size: 26px; }
+  .tone-answer > strong { font-size: 80px; }
+  .tone-answer.both > strong { font-size: 48px; }
+  .result-content > .spin-button, .result-content > .teacher-button { min-height: 80px; font-size: 32px; }
+  .image-result .image-title { font-size: 64px; }
+  .image-result .image-title.is-long { font-size: 44px; }
+  .image-result .picture-pair { font-size: 32px; }
+  .countdown-stage { gap: 24px; }
+  .countdown-frame { width: min(78cqw, calc((100cqh - 112px) * 1920 / 819), 2200px); }
+  .timer-start { width: 420px; min-height: 80px; font-size: 32px; }
+  .coloring-instruction { width: min(1600px, 88%); }
+  .coloring-instruction p { font-size: clamp(38px, 2vw, 58px); }
+  .slides-caption, .slides-key-hint { font-size: 20px; }
+  .slide-pager .glass-button { min-width: 56px; min-height: 56px; }
+  .slide-page-count { font-size: 28px; }
+  .slide-thumbnail { flex-basis: 210px; }
+  .slide-thumbnail-number { font-size: 18px; }
+  .presentation-controls > button { min-width: 56px; min-height: 56px; }
+  .presentation-controls > span[role="status"] { font-size: 24px; min-width: 90px; }
+}
+/* Keep older tablet/TV browsers usable without container query units. */
+@supports not (width: 1cqw) {
+  .wheel-stage { --focus-wheel-size: min(calc(100vw - 48px), calc(var(--app-height) - 320px), 1600px); --parked-wheel-size: clamp(80px, 12vw, 230px); }
+  .cream-stage { width: clamp(64px, 12vw, 260px); }
+  .countdown-frame { width: min(78vw, calc((var(--app-height) - 360px) * 1920 / 819), 1600px); }
+  .timer-start { width: min(340px, 80vw); }
+  .timer-digits { font-size: clamp(30px, 8vw, 180px); }
+  .timer-status { font-size: 11px; }
+  .timer-units { font-size: 10px; }
+  .timer-clock { gap: 2px; }
+  .slide-canvas { width: min(100%, calc((var(--app-height) - var(--slides-reserved)) * 16 / 9)); }
+  .slides-shell.is-presenting .slide-canvas { width: min(100vw, calc(var(--app-height) * 16 / 9)); }
+  @media (max-aspect-ratio: 1/1) {
+    .wheel-stage { --focus-wheel-size: min(calc(100vw - 32px), calc(var(--app-height) - 320px), 1000px); --parked-wheel-size: clamp(64px, 15vw, 110px); }
+    .cream-stage { width: clamp(48px, 12vw, 100px); }
+    .countdown-frame { width: min(calc(100vw - 24px), calc((var(--app-height) - 320px) * 1920 / 819)); }
+  }
+  @media (max-height: 600px) and (min-aspect-ratio: 6/5) {
+    :root { --slides-reserved: 210px; }
+    .wheel-stage { --focus-wheel-size: min(calc(var(--app-height) - 140px), calc(100vw - 300px), 600px); --parked-wheel-size: 68px; }
+    .stage-spin-button { width: min(160px, calc((100vw - var(--focus-wheel-size)) / 2 - 40px - var(--safe-right))); }
+    .countdown-frame { width: min(76vw, calc((var(--app-height) - 220px) * 1920 / 819)); }
+    .timer-start { width: min(260px, 70vw); }
+  }
+  @media (min-width: 1800px) and (min-height: 900px) { :root { --slides-reserved: 400px; } }
+}
+@media (hover: none) {
+  .glass-button:hover:not(:disabled) { transform: none; }
+  .stage-spin-button:hover:not(:disabled) { transform: translate(var(--spin-x), var(--spin-y)) !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

@@ -6,6 +6,7 @@ import backdrop from "../../UI/Welcome/bg.png";
 import { SLIDES, SLIDE_STORAGE_KEY } from "@/lib/slides";
 import { Icon } from "./icon";
 import { ModeNavigation } from "./mode-navigation";
+import { SlideArtwork } from "./slide-artwork";
 
 export function SlidesMode() {
   const [page, setPage] = useState(0);
@@ -126,7 +127,7 @@ export function SlidesMode() {
         onPointerUp={endSwipe}
         onPointerCancel={() => { swipe.current = null; }}
         onClick={event => { if (presenting && !swiped.current) movePage(event.shiftKey ? -1 : 1); }}>
-        <Image key={page} className="slide-art" src={SLIDES[page]} alt={`สไลด์การสอนหน้า ${page + 1} จาก ${SLIDES.length}`} fill sizes="100vw" loading="eager" draggable={false}/>
+        <SlideArtwork page={page}/>
       </div>
     </section>
 

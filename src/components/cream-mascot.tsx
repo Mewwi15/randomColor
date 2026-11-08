@@ -17,7 +17,7 @@ export function CreamMascot({ pose, placement = "stage" }: { pose: CreamPose; pl
       alt=""
       width={330}
       height={495}
-      sizes={placement === "timer" ? "(max-width: 700px) 120px, 260px" : placement === "result" ? "(max-width: 700px) 40vw, 280px" : "(max-aspect-ratio: 1/1) 96px, (max-width: 1100px) 220px, 330px"}
+      sizes={placement === "timer" ? "(max-aspect-ratio: 1/1) 120px, (max-width: 1100px) 110px, 260px" : placement === "result" ? "(min-width: 1800px) 460px, (max-width: 600px) 40vw, 280px" : "(max-aspect-ratio: 1/1) 100px, (max-width: 1100px) 220px, 330px"}
       loading="eager"
       className={name === pose ? "cream-pose is-visible" : "cream-pose"}
       draggable={false}

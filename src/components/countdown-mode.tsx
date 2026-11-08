@@ -181,7 +181,7 @@ export function CountdownMode() {
       <section className="countdown-stage" aria-labelledby="countdown-title">
         <h2 id="countdown-title" className="sr-only">นาฬิกาถอยหลัง</h2>
         <div className="countdown-frame">
-          <Image className="countdown-frame-art" src={countdownFrame} alt="" preload sizes="(max-width: 700px) 96vw, (max-width: 1700px) 76vw, 1280px" draggable={false}/>
+          <Image className="countdown-frame-art" src={countdownFrame} alt="" preload sizes="(max-aspect-ratio: 1/1) 96vw, 78vw" draggable={false}/>
           <div className={`timer-clock${running && remaining <= 60_000 ? " is-ending" : ""}`}>
             <span className="timer-status" role="status">{status}</span>
             <div className="timer-digits" role="timer" aria-live="off" aria-label={`เหลือเวลา ${Math.floor(Math.ceil(remaining / 1000) / 60)} นาที ${Math.ceil(remaining / 1000) % 60} วินาที`}>{time}</div>

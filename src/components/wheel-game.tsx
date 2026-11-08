@@ -184,7 +184,7 @@ export function WheelGame() {
     dispatch({ type: "reveal" });
   }
 
-  return <main className={`game-shell${tvMode ? " tv-mode" : ""}${spinning ? " wheel-is-spinning" : ""}`}>
+  return <main className={`game-shell wheel-shell${tvMode ? " tv-mode" : ""}${spinning ? " wheel-is-spinning" : ""}`}>
     <div className="scene-background" aria-hidden="true"><Image src={backdrop} alt="" fill preload sizes="100vw" /><div className="scene-tint" /></div>
     <header className="topbar">
       <div className="brand-modes"><h1 id="game-title">วงล้อ<span>ศิลป์ถิ่นเรา</span></h1><ModeNavigation current="wheel" disabled={spinning}/></div>
@@ -233,7 +233,7 @@ export function WheelGame() {
             ? <button autoFocus className="teacher-button" onClick={revealAnswer}><Icon name="sparkles" size={28}/> ครู: เฉลยคำตอบ</button>
             : <button autoFocus className="spin-button" onClick={() => dispatch({ type: "continue-color" })}>ไปสุ่มภาพต่อ <Icon name="arrow" size={28}/></button>}
         </> : resultImage && <>
-          <div className="result-artwork">{resultImage.imageSrc ? <Image src={resultImage.imageSrc} alt={resultImage.label} fill sizes="(max-width: 700px) 92vw, 760px" /> : <PicturePlaceholder number={PICTURE_ENTRIES.indexOf(resultImage) + 1} size={280} />}</div>
+          <div className="result-artwork">{resultImage.imageSrc ? <Image src={resultImage.imageSrc} alt={resultImage.label} fill sizes="(min-width: 1800px) 1320px, (max-width: 600px) calc(100vw - 48px), 900px" /> : <PicturePlaceholder number={PICTURE_ENTRIES.indexOf(resultImage) + 1} size={280} />}</div>
           <h2 id="result-title" className={`result-title image-title${(resultImage.wheelLabelLines?.length ?? 1) > 2 ? " is-long" : ""}`}>{resultImage.label}</h2>
           <p id="result-instruction" className="picture-pair">คู่กับ <span className="color-dot" style={{ background: resultColor?.color }}/><strong>{resultColor?.label}</strong></p>
           <button autoFocus className="spin-button" onClick={() => dispatch({ type: "next-round" })}>{roundNumber === TOTAL_ROUNDS ? "จบกิจกรรม" : "จบรอบนี้ · เล่นรอบถัดไป"}<Icon name="arrow" size={26}/></button>

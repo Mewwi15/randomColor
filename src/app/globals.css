@@ -177,119 +177,21 @@ h1 > span { color: #ad371e; }
 .timer-dialog-tools .timer-sound-toggle { grid-column: 1 / -1; }
 .timer-dialog-tools .timer-sound-toggle[aria-pressed="true"] { color: #385e24; background: #e9f3dd; border-color: #669048; }
 
-@media (max-height: 760px) and (min-width: 701px) {
-  .timer-shell { --countdown-width: min(76vw, 1280px, calc((100svh - 400px) * 2.344)); }
-  .timer-shell .topbar { padding: 10px 22px; }
-  .timer-workspace { padding: 0 20px 16px; gap: 12px; }
-  .countdown-stage { gap: 8px; }
-  .timer-start { min-height: 46px; padding-block: 8px; }
-  .coloring-instruction { padding: 8px 18px; }
-  .coloring-instruction p { font-size: 25px; }
-}
-/* Portrait screens park the second wheel in the bottom corner. */
-@media (max-aspect-ratio: 1/1) {
-  :root { --focus-wheel-size: min(calc(100svh - 340px), calc(100vw - 40px), 800px); --parked-wheel-size: clamp(76px, 18vw, 130px); }
-  .wheel-card { top: 50%; }
-  .wheel-card.is-inactive { top: calc(100% - var(--parked-wheel-size) / 2 - 20px); left: calc(100% - var(--parked-wheel-size) / 2 - 20px); }
-  .cream-stage { width: clamp(60px, 18vw, 96px); left: 14px; bottom: 14px; }
-}
-@media (max-width: 700px) {
-  .brand-modes { gap: 6px; }
-  .mode-navigation { padding: 3px; gap: 2px; border-radius: 12px; }
-  .mode-option { font-size: 13px; padding: 5px 8px; gap: 5px; }
-  .mode-option svg { width: 16px; height: 16px; }
-  .timer-shell { --countdown-width: calc(100vw - 16px); }
-  .timer-shell .topbar { padding: 12px 10px; }
-  .timer-workspace { padding: 0 8px 12px; display: grid; grid-template-columns: 80px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "clock clock" "mascot instruction"; gap: 10px 8px; }
-  .countdown-stage { grid-area: clock; height: 100%; gap: 8px; }
-  .timer-mascot { grid-area: mascot; position: static; width: 80px; transform: none; align-self: center; }
-  .timer-start { min-height: 46px; padding: 8px 16px; font-size: 18px; }
-  .coloring-instruction { grid-area: instruction; width: 100%; padding: 8px; border-radius: 16px; align-self: center; }
-  .coloring-instruction p { font-size: clamp(17px, 4.5vw, 25px); }
-  .timer-settings-dialog { padding: 20px 16px; }
-  .timer-settings-heading h2 { font-size: 19px; }
-  .result-guide { gap: 10px; }
-  .topbar { padding: 12px 10px; gap: 6px; }
-  h1 { font-size: clamp(20px, 4.6vw, 30px); padding: 6px 10px; border-width: 2px; border-radius: 12px; }
-  .header-actions { gap: 4px; }
-  .header-actions .glass-button { min-width: 32px; min-height: 40px; padding: 0 6px; border-radius: 10px; }
-  .header-actions .glass-button > svg { width: 18px; height: 18px; }
-  .wheel-label { font-size: 19px; bottom: calc(100% + 26px); }
-  .wheel-frame { padding: 15px; border-width: 2px; }
-  .wheel-hub { border-width: 4px; outline-width: 2px; }
-  .wheel-hub > b { font-size: 17px; }
-  .wheel-lights > i::after { width: 4px; height: 4px; }
-  .wheel-pointer { width: 34px; height: 48px; }
-  .stage-spin-button { top: calc(100% + 24px); width: min(300px, 85vw); min-height: 54px; padding: 10px 16px; font-size: 18px; }
-  .select-wheel-overlay > span { padding: 6px 8px; font-size: 11px; }
-  .result-dialog { border-radius: 22px; width: calc(100% - 24px); max-height: calc(100svh - 24px); }
-  .result-content { height: min(760px, calc(100svh - 30px)); padding: 12px 16px; gap: 8px; }
-  .color-result-body { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "mascot choice" "prompt prompt"; gap: 12px; }
-  .color-result-body > .cream-result { max-height: 300px; }
-  .color-choice { flex-direction: column; align-self: center; gap: 8px; }
-  .color-choice .result-title { font-size: clamp(32px, 8.5vw, 58px); }
-  .result-color-swatch { width: clamp(44px, 10svh, 70px); border-radius: 18px; }
-  .question-text { font-size: clamp(21px, 5.5vw, 28px); }
-  .teacher-hint { font-size: 13px; margin-top: 6px; }
-  .tone-answer { padding: 8px 12px; }
-  .tone-answer > strong { font-size: clamp(32px, 9vw, 48px); }
-  .retirement-note { font-size: 14px; margin-top: 6px; }
-  .result-content > .spin-button, .result-content > .teacher-button { min-width: 0; width: 100%; font-size: 18px; padding: 8px 12px; gap: 8px; }
-  .result-dialog:has(.image-result) { width: calc(100% - 24px); max-height: calc(100svh - 24px); }
-  .image-result { min-height: 0; height: calc(100svh - 30px); max-height: calc(100svh - 30px); padding: 12px 14px; gap: 5px; }
-  .image-result .cream-result { width: 44px; flex-basis: 44px; }
-  .image-result .result-round { font-size: 14px; }
-  .image-result .image-title { font-size: 35px; }
-  .picture-pair { font-size: 22px; }
-}
-@media (max-height: 500px) and (orientation: landscape) {
-  .timer-shell { --countdown-width: min(66vw, calc((100svh - 220px) * 2.344)); min-height: 320px; }
-  .timer-shell .topbar { padding: 8px 16px; }
-  .timer-shell .brand-modes { flex-direction: row; align-items: center; gap: 12px; }
-  .timer-workspace { display: flex; padding: 0 16px 8px; gap: 6px; }
-  .countdown-stage { gap: 6px; }
-  .timer-start { width: 200px; min-height: 38px; padding: 5px 12px; font-size: 16px; }
-  .timer-mascot { position: absolute; left: 20px; top: 35%; width: min(16vw, 120px); transform: translateY(-50%); }
-  .coloring-instruction { width: min(760px, 80vw); padding: 5px 12px; }
-  .coloring-instruction p { font-size: 18px; line-height: 1.35; }
-  .result-content { padding: 8px 16px; gap: 6px; }
-  .result-round { font-size: 13px; }
-  .color-result-body { grid-template-columns: minmax(0, .65fr) minmax(0, 1.45fr); grid-template-rows: auto auto; grid-template-areas: "mascot choice" "mascot prompt"; align-content: center; gap: 6px 16px; }
-  .color-choice { flex-direction: row; gap: 12px; }
-  .color-choice .result-title { font-size: clamp(30px, 8svh, 40px); }
-  .result-color-swatch { width: 36px; border-width: 3px; border-radius: 12px; }
-  .question-text { font-size: clamp(17px, 4.5svh, 22px); }
-  .teacher-hint, .retirement-note { font-size: 12px; margin-top: 4px; }
-  .tone-answer { padding: 4px 12px; border-radius: 12px; }
-  .tone-answer > span { font-size: 12px; }
-  .tone-answer > strong { font-size: clamp(26px, 7.5svh, 38px); }
-  .result-content > .spin-button, .result-content > .teacher-button { min-height: 44px; padding: 6px 16px; font-size: 16px; }
-  .image-result { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto auto; padding: 10px 16px; gap: 6px 18px; }
-  .image-result .result-guide { grid-column: 1 / -1; }
-  .image-result .cream-result { width: 32px; flex-basis: 32px; }
-  .image-result .result-round { font-size: 13px; }
-  .image-result .result-artwork { grid-area: 2 / 1 / 5 / 2; }
-  .image-result .image-title { grid-area: 2 / 2; font-size: 30px; }
-  .image-result .picture-pair { grid-area: 3 / 2; font-size: 18px; }
-  .image-result > .spin-button { grid-area: 4 / 2; min-height: 44px; font-size: 16px; padding: 8px 12px; }
-  :root { --focus-wheel-size: calc(100svh - 145px); --parked-wheel-size: 90px; }
-  .topbar { padding: 10px 16px; }
-  h1 { font-size: 22px; padding: 5px 12px; }
-  .wheel-label { font-size: 16px; bottom: calc(100% + 23px); }
-  .stage-spin-button { top: calc(100% + 19px); min-height: 44px; padding: 6px 16px; font-size: 16px; }
-  .wheel-frame { padding: 12px; }
-  .wheel-hub { border-width: 3px; }
-  .wheel-hub > span { font-size: 17px; }
-  .wheel-hub > b { font-size: 13px; }
-}
+
+
+
+
+
 /* A large slide canvas with a Canva-style page strip and a quiet presentation view. */
 .slides-shell { display: flex; flex-direction: column; outline: none; }
 .slides-shell .topbar { position: relative; flex-shrink: 0; padding: 16px 24px; }
 .slides-shell .slides-present-button { min-height: 46px; padding: 0 18px; border: 2px solid #ffdc80; background: #ffda74; color: #65421f; white-space: nowrap; }
 .slides-shell .slides-present-button:hover { background: #ffe89d; }
 .slides-stage { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; padding: 16px 24px; container-type: size; }
-.slide-canvas { position: relative; width: min(100%, calc((100svh - 340px) * 1.77778)); width: min(100cqw, calc(100cqh * 16 / 9)); aspect-ratio: 16 / 9; flex-shrink: 0; overflow: hidden; border-radius: 8px; background: white; box-shadow: 0 0 0 2px #fff7e4, 0 10px 35px #15354c40; touch-action: pan-y; user-select: none; }
-.slide-art { object-fit: contain; }
+.slide-canvas { position: relative; width: min(100%, calc((100svh - 340px) * 1.77778)); width: min(100cqw, calc(100cqh * 16 / 9)); aspect-ratio: 16 / 9; flex-shrink: 0; overflow: hidden; border-radius: 8px; background: #10161e; box-shadow: 0 0 0 2px #fff7e4, 0 10px 35px #15354c40; touch-action: pan-y; user-select: none; }
+.slide-image-stack { position: absolute; inset: 0; pointer-events: none; }
+.slide-art { object-fit: contain; opacity: 0; }
+.slide-art.is-visible { opacity: 1; }
 .slides-toolbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; flex-shrink: 0; padding: 8px 24px; background: #fff9edee; border-top: 1px solid #fff8; color: #654a2c; }
 .slides-caption { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 15px; font-weight: 700; }
 .slide-pager { display: flex; align-items: center; justify-content: center; gap: 14px; }
@@ -315,36 +217,3 @@ h1 > span { color: #ad371e; }
 .presentation-controls > button:hover:not(:disabled) { background: #ffffff24; }
 .presentation-controls > span[role="status"] { min-width: 65px; font-family: Arial, Helvetica, sans-serif; text-align: center; font-size: 17px; font-variant-numeric: tabular-nums; }
 .presentation-divider { align-self: stretch; margin: 8px 3px; width: 1px; background: #ffffff40; }
-@media (max-width: 700px) {
-  .slides-shell .topbar { padding: 12px 10px; }
-  .slides-shell .slides-present-button { min-width: 44px; padding: 0 12px; }
-  .slides-stage { padding: 8px 10px; }
-  .slide-canvas { width: min(100%, calc((100svh - 290px) * 1.77778)); width: min(100cqw, calc(100cqh * 16 / 9)); }
-  .slides-toolbar { grid-template-columns: 1fr; padding: 6px 12px; }
-  .slides-caption, .slides-key-hint { display: none; }
-  .slides-filmstrip { gap: 8px; padding: 10px 12px; scroll-padding-inline: 12px; }
-  .slide-thumbnail { flex-basis: 118px; }
-}
-@media (max-width: 480px) {
-  .slides-present-button > span { display: none; }
-}
-@media (max-width: 380px) {
-  .mode-option { padding-inline: 7px; }
-  .mode-option svg { display: none; }
-}
-@media (max-height: 500px) and (orientation: landscape) {
-  .slides-shell .topbar { padding: 8px 16px; }
-  .slides-shell .brand-modes { flex-direction: row; align-items: center; gap: 12px; }
-  .slides-shell .slides-present-button { min-height: 40px; }
-  .slides-stage { padding: 4px 12px; }
-  .slides-toolbar { grid-template-columns: 1fr; padding: 4px 12px; }
-  .slides-caption, .slides-key-hint { display: none; }
-  .slide-pager .glass-button { min-width: 32px; min-height: 32px; }
-  .slides-filmstrip { gap: 8px; padding: 6px 16px; }
-  .slide-thumbnail { flex-basis: 100px; gap: 2px; border-width: 2px; padding: 2px; }
-  .slide-thumbnail-number { font-size: 11px; }
-  .presentation-controls { bottom: 10px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-}

@@ -36,8 +36,9 @@ body { overflow-x: clip; }
   --focus-wheel-size: min(calc(100cqw - 48px), calc(100cqh - 168px), 1600px);
   --parked-wheel-size: clamp(80px, 12cqw, 230px);
 }
-.wheel-card { top: calc(50% - 8px); }
-.wheel-card.is-inactive { top: 50%; left: calc(100% - var(--parked-wheel-size) / 2 - max(16px, var(--safe-right))); }
+.wheel-card { top: calc(50% - 8px); height: var(--focus-wheel-size); }
+.wheel-card.is-inactive { top: 50%; height: var(--parked-wheel-size); left: calc(100% - var(--parked-wheel-size) / 2 - max(16px, var(--safe-right))); }
+.wheel-visual, .wheel-render, .wheel-frame { height: 100%; }
 .select-wheel-overlay > span { max-width: 100%; padding: 5px 6px; font-size: clamp(11px, 1vw, 17px); }
 .cream-stage { left: max(16px, var(--safe-left)); bottom: calc(20px + var(--safe-bottom)); width: clamp(72px, calc((100cqw - var(--focus-wheel-size)) / 2 - 32px), 330px); }
 .wheel-label { bottom: calc(100% + 26px); font-size: clamp(19px, 1.7vw, 32px); line-height: 1.4; }
@@ -73,9 +74,9 @@ body { overflow-x: clip; }
 /* Keep the timer frame centered, with room reserved for the start button. */
 .timer-workspace {
   display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto;
-  gap: 16px; padding: 0 calc(20px + var(--safe-right)) calc(20px + var(--safe-bottom)) calc(20px + var(--safe-left));
+  align-items: stretch; gap: 16px; padding: 0 calc(20px + var(--safe-right)) calc(20px + var(--safe-bottom)) calc(20px + var(--safe-left));
 }
-.countdown-stage { grid-area: 1 / 1; height: auto; min-height: 0; gap: 16px; padding: 8px 0; container-type: size; }
+.countdown-stage { grid-area: 1 / 1; align-self: stretch; justify-self: stretch; height: 100%; min-height: 0; gap: 16px; padding: 8px 0; container-type: size; }
 .countdown-frame { width: min(78cqw, calc((100cqh - 84px) * 1920 / 819), 2000px); }
 .timer-start { width: min(340px, 80cqw); min-height: 56px; padding: 10px 20px; line-height: 1.4; }
 .timer-mascot { left: calc(20px + var(--safe-left)); top: 42%; width: clamp(72px, 9vw, 260px); }
@@ -153,8 +154,10 @@ body { overflow-x: clip; }
 
 /* Phone and iPad portrait keep the decorative elements out of the central wheel. */
 @media (max-aspect-ratio: 1/1) {
-  .wheel-stage { --focus-wheel-size: min(calc(100cqw - 32px), calc(100cqh - 160px), 1000px); --parked-wheel-size: clamp(64px, 15cqw, 110px); }
+  .wheel-stage { --focus-wheel-size: min(calc(100cqw - 32px), calc(100cqh - 160px), 1000px); --parked-wheel-size: clamp(80px, 18vw, 120px); }
   .wheel-card.is-inactive { top: calc(var(--parked-wheel-size) / 2 + 6px); left: calc(100% - var(--parked-wheel-size) / 2 - max(10px, var(--safe-right))); }
+  .wheel-card.is-inactive .wheel-render { filter: blur(2px); opacity: .72; }
+  .wheel-card.is-inactive .select-wheel-overlay > span { position: absolute; top: calc(100% + 5px); }
   .cream-stage { left: max(10px, var(--safe-left)); top: 6px; bottom: auto; width: clamp(48px, 12cqw, 100px); }
   .timer-workspace { grid-template-columns: clamp(64px, 14vw, 120px) minmax(0, 1fr); gap: 12px; padding: 0 calc(12px + var(--safe-right)) calc(12px + var(--safe-bottom)) calc(12px + var(--safe-left)); }
   .countdown-stage { grid-area: 1 / 1 / 2 / -1; gap: 12px; }
@@ -283,7 +286,7 @@ body { overflow-x: clip; }
   .slide-canvas { width: min(100%, calc((var(--app-height) - var(--slides-reserved)) * 16 / 9)); }
   .slides-shell.is-presenting .slide-canvas { width: min(100vw, calc(var(--app-height) * 16 / 9)); }
   @media (max-aspect-ratio: 1/1) {
-    .wheel-stage { --focus-wheel-size: min(calc(100vw - 32px), calc(var(--app-height) - 320px), 1000px); --parked-wheel-size: clamp(64px, 15vw, 110px); }
+    .wheel-stage { --focus-wheel-size: min(calc(100vw - 32px), calc(var(--app-height) - 320px), 1000px); --parked-wheel-size: clamp(80px, 18vw, 120px); }
     .cream-stage { width: clamp(48px, 12vw, 100px); }
     .countdown-frame { width: min(calc(100vw - 24px), calc((var(--app-height) - 320px) * 1920 / 819)); }
   }

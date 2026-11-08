@@ -5,12 +5,12 @@ export const COLOR_LIMIT = 2;
 export const ACTIVITY_STORAGE_KEY = "art-local-classroom-v1";
 
 // Keep this order and the picture IDs stable for saved classroom sessions.
-// Originals are in UI/img; the public copies retain the complete, unedited images.
+// Public copies retain the complete, unedited images; versioned filenames refresh replaced artwork.
 const PICTURES = [
   { label: "🦪 หอยนางรม", file: "oysters.png" },
   { label: "🚤 เรือพระ", file: "chak-phra.png" },
   { label: "🌺 ดอกบัวผุด", file: "rafflesia.png" },
-  { label: "🎭 หนังตะลุง", file: "shadow-puppet.png" },
+  { label: "🎭 หนังตะลุง", file: "shadow-puppet-e746ecd061c8.png" },
   { label: "🏝️ เกาะสมุย–เกาะพะงัน–หมู่เกาะอ่างทอง", file: "seaside.png", wheelLabelLines: ["🏝️ เกาะสมุย", "–เกาะพะงัน", "–หมู่เกาะอ่างทอง"] },
   { label: "🌳 ต้นยางพารา", file: "rubber-tapping.png" },
   { label: "🛕 พระบรมธาตุไชยา", file: "pagoda.png", wheelLabelLines: ["🛕 พระบรมธาตุ", "ไชยา"] },
